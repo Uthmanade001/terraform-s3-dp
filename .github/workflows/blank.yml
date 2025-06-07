@@ -1,0 +1,42 @@
+# This is a basic workflow to help you get started with Actions
+
+name: Deploy to S3 (All Environments)
+
+on:
+  push:
+    branches:
+      - dev
+      - staging
+      - prod
+     
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-west-2
+
+      - name: Deploy to correct S3 bucket
+        run: |
+          echo "Deploying branch: $GITHUB_REF_NAME"
+
+          if [[ "${GITHUB_REF_NAME}" == "develop" ]]; then
+            aws s3 sync ./develop s3://uthman-develop-2025 --delete
+          elif [[ "${GITHUB_REF_NAME}" == "dev" ]]; then
+            aws s3 sync ./dev s3://uthman-develop-2025 --delete
+          elif [[ "${GITHUB_REF_NAME}" == "staging" ]]; then
+            aws s3 sync ./staging s3://uthman-staging-2025 --delete
+          elif [[ "${GITHUB_REF_NAME}" == "prod" ]]; then
+            aws s3 sync ./prod s3://uthman-production-2025 --delete
+          else
+            echo "No matching deployment branch - skipping deploy."
+          fi
