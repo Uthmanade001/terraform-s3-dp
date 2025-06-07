@@ -19,11 +19,11 @@ jobs:
       - name: Set Bucket Name based on Environment
         run: |
           if [[ "${{ github.event.inputs.environment }}" == "develop" ]]; then
-            echo "ENV_BUCKET=uthman-develop-bucket-2025" >> $GITHUB_ENV
+            echo "ENV_BUCKET=uthman-develop-2025" >> $GITHUB_ENV
           elif [[ "${{ github.event.inputs.environment }}" == "staging" ]]; then
-            echo "ENV_BUCKET=uthman-staging-bucket-2025" >> $GITHUB_ENV
+            echo "ENV_BUCKET=uthman-staging-2025" >> $GITHUB_ENV
           elif [[ "${{ github.event.inputs.environment }}" == "prod" ]]; then
-            echo "ENV_BUCKET=uthman-production-bucket-2025" >> $GITHUB_ENV
+            echo "ENV_BUCKET=uthman-production-2025" >> $GITHUB_ENV
           else
             echo "Invalid environment selected!"
             exit 1
