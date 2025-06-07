@@ -1,0 +1,41 @@
+name: Rollback index.html in S3
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment (dev, staging, prod)'
+        required: true
+        default: 'prod'
+      version_id:
+        description: 'Version ID to rollback to (you can get it from AWS Console or CLI)'
+        required: true
+
+jobs:
+  rollback:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Set Bucket Name based on Environment
+        run: |
+          if [[ "${{ github.event.inputs.environment }}" == "develop" ]]; then
+            echo "ENV_BUCKET=uthman-develop-2025" >> $GITHUB_ENV
+          elif [[ "${{ github.event.inputs.environment }}" == "staging" ]]; then
+            echo "ENV_BUCKET=uthman-staging-2025" >> $GITHUB_ENV
+          elif [[ "${{ github.event.inputs.environment }}" == "prod" ]]; then
+            echo "ENV_BUCKET=uthman-production-2025" >> $GITHUB_ENV
+          else
+            echo "Invalid environment selected!"
+            exit 1
+          fi
+
+      - name: Rollback index.html to specified version
+        run: |
+          echo "Rolling back index.html in bucket: $ENV_BUCKET to version: ${{ github.event.inputs.version_id }}"
+          aws s3api copy-object \
+            --bucket $ENV_BUCKET \
+            --key index.html \
+            --copy-source $ENV_BUCKET/index.html?versionId=${{ github.event.inputs.version_id }}
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
