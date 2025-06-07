@@ -44,3 +44,5 @@ resource "aws_s3_object" "index" {
     content      = "<html><body><h1>WELCOME TO STAGING</h1><p>This site is hosted on AWS S3 using Terraform.</p></body></html>"
     content_type = "text/html"
 }
+
+#this is a test deploy trigger
