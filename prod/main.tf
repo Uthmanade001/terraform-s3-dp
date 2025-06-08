@@ -2,17 +2,8 @@ provider "aws" {
     region = "eu-west-2"
 }
 
-resource "aws_s3_bucket" "uthman_production" {
-    bucket = "uthman-production-2025"
-    force_destroy = true
 
-    tags = {
-        Name        = "uthman-production-2025"
-        Environment = "production"
-    }
-}
-
-resource "aws_s3_bucket_website_configuration" "prod_website" {
+resource "aws_s3_bucket_website_configuration" "website" {
   bucket = aws_s3_bucket.uthman_production.id
 
   index_document {
@@ -40,7 +31,7 @@ resource "aws_s3_bucket_policy" "public_read_policy" {
 resource "aws_s3_object" "index" {
     bucket       = aws_s3_bucket.uthman_production.id
     key          = "index.html"
-    content      = "<html><body><h1>WELCOME TO PRODUCTION</h1><p>This site is hosted on AWS S3 using Terraform.</p></body></html>"
+    content      = "<html><body><h1>WELCOME TO PRODUCTION</h1><p>This site is hosted on AWS S3 using Terraform. I KNOW BUT MAKE UNA COPERATE</p></body></html>"
     content_type = "text/html"
 }
 
