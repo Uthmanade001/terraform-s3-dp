@@ -3,8 +3,8 @@ provider "aws" {
 }
 
 
-resource "aws_s3_bucket_website_configuration" "website" {
-  bucket = aws_s3_bucket.uthman_production.id
+resource "aws_s3_bucket_website_configuration" "prod_website" {
+  bucket = "uthman-production-2025"
 
   index_document {
     suffix = "index.html"
@@ -12,7 +12,7 @@ resource "aws_s3_bucket_website_configuration" "website" {
 }
 
 resource "aws_s3_bucket_policy" "public_read_policy" {
-    bucket = aws_s3_bucket.uthman_production.id
+    bucket = "uthman-production-2025"
 
     policy = jsonencode({
         Version = "2012-10-17"
@@ -29,7 +29,7 @@ resource "aws_s3_bucket_policy" "public_read_policy" {
 }
 
 resource "aws_s3_object" "index" {
-    bucket       = aws_s3_bucket.uthman_production.id
+    bucket       = "uthman-production-2025"
     key          = "index.html"
     content      = "<html><body><h1>WELCOME TO PRODUCTION</h1><p>This site is hosted on AWS S3 using Terraform. I KNOW BUT MAKE UNA COPERATE</p></body></html>"
     content_type = "text/html"
@@ -89,4 +89,13 @@ resource "aws_cloudfront_distribution" "production_distribution" {
   tags = {
     Environment = "Production"
   }
+}
+#output block to display the S3 bucket URL and CloudFront distribution URL
+output "prod_cloudfront_url" {
+  description = "CloudFront URL for Production environment"
+  value       = aws_cloudfront_distribution.production_distribution.domain_name
+}
+#this is to check the CloudFront distribution ID for production environment
+output "production_cloudfront_distribution_id" {
+  value = aws_cloudfront_distribution.production_distribution.id
 }
