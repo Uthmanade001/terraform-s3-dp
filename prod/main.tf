@@ -2,6 +2,15 @@ provider "aws" {
     region = "eu-west-2"
 }
 
+resource "aws_s3_bucket" "uthman_production" {
+    bucket = "uthman-production-2025"
+    force_destroy = true
+
+    tags = {
+        Name        = "uthman-production-2025"
+        Environment = "production"
+    }
+}
 
 resource "aws_s3_bucket_website_configuration" "prod_website" {
   bucket = aws_s3_bucket.uthman_production.id
