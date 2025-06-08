@@ -2,15 +2,15 @@ provider "aws" {
     region = "eu-west-2"
 }
 
-
-resource "aws_s3_bucket_website_configuration" "prod_website" {
+# S3 Website Configuration — points to existing bucket
+resource "aws_s3_bucket_website_configuration" "website" {
   bucket = "uthman-production-2025"
 
   index_document {
     suffix = "index.html"
   }
 }
-
+# S3 Bucket Policy — public read access (plus GetObject if needed)
 resource "aws_s3_bucket_policy" "public_read_policy" {
     bucket = "uthman-production-2025"
 
@@ -21,13 +21,17 @@ resource "aws_s3_bucket_policy" "public_read_policy" {
                 Sid       = "PublicReadGetObject"
                 Effect    = "Allow"
                 Principal = "*"
-                Action    = "s3:GetObject"
-                Resource  = "${aws_s3_bucket.uthman_production.arn}/*"
+                Action    = [
+                  "s3:GetObject",
+                  "s3:GetObjectVersion"
+                ]             
+                Resource  = "arn:aws:s3:::uthman-production-2025/*"
             }
         ]
     })
 }
 
+# S3 Object (index.html)
 resource "aws_s3_object" "index" {
     bucket       = "uthman-production-2025"
     key          = "index.html"
@@ -39,7 +43,7 @@ resource "aws_s3_object" "index" {
 
 resource "aws_cloudfront_distribution" "production_distribution" {
   origin {
-    domain_name = aws_s3_bucket.uthman_production.bucket_regional_domain_name
+    domain_name = aws_s3_bucket_website_configuration.website.website_endpoint
     origin_id   = "productionS3Origin"
 
     custom_origin_config {
