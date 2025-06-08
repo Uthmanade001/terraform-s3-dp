@@ -36,7 +36,7 @@ resource "aws_s3_bucket_policy" "public_read_policy" {
 resource "aws_s3_object" "index" {
     bucket       = "uthman-staging-2025"
     key          = "index.html"
-    content      = "<html><body><h1>WELCOME TO STAGING</h1><p>This site is hosted on AWS S3 using Terraform.</p></body></html>"
+    content      = "<html><body><h1>WELCOME TO STAGING</h1><p>This site is hosted on AWS S3 using Terraform.</p><p>make una dey work intime too abeg</p></body></html>"
     content_type = "text/html"
 }
 
