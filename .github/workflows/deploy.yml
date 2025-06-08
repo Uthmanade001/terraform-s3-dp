@@ -6,6 +6,7 @@ on:
       - develop
       - staging
       - prod
+
 jobs:
   terraform-deploy:
     name: Deploy to S3 and Invalidate CloudFront
@@ -30,10 +31,13 @@ jobs:
             echo "ENV_DIR=staging" >> $GITHUB_ENV
             echo "ENV_BUCKET=uthman-staging-2025" >> $GITHUB_ENV
             echo "DISTRIBUTION_ID=${{ secrets.STAGING_CLOUDFRONT_DISTRIBUTION_ID }}" >> $GITHUB_ENV
-          elif [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
+          elif [[ "${{ github.ref }}" == "refs/heads/prod" ]]; then
             echo "ENV_DIR=prod" >> $GITHUB_ENV
             echo "ENV_BUCKET=uthman-production-2025" >> $GITHUB_ENV
             echo "DISTRIBUTION_ID=${{ secrets.PROD_CLOUDFRONT_DISTRIBUTION_ID }}" >> $GITHUB_ENV
+          else
+            echo "ERROR: Branch '${{ github.ref }}' not configured for deploy. Exiting."
+            exit 1
           fi
 
       - name: Terraform Init
